@@ -1,0 +1,31 @@
+name: Integración Continua EcoTrack
+
+on:
+  push:
+    branches: [ "develop", "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test-proyeto:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Obtener código
+      uses: actions/checkout@v3
+
+    - name: Instalar Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Instalar dependencias
+      run: |
+        pip install -r requirements.txt
+
+    - name: Verificar Migraciones
+      run: |
+        python manage.py makemigrations --check --dry-run
+
+    - name: Correr Tests
+      run: |
+        python manage.py test
