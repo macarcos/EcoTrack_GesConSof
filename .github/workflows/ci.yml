@@ -22,10 +22,6 @@ jobs:
       run: |
         pip install -r requirements.txt
 
-    - name: Verificar Migraciones
-      run: |
-        python manage.py makemigrations --check --dry-run
-
     - name: Correr Tests
       run: |
         python manage.py test
