@@ -160,3 +160,5 @@ programa o archivo por lotes ejecutable.
 programa o archivo por lotes ejecutable.
 
 (venv) C:\Users\Det-Pc\Desktop\EcoTrack_GesConSof>
+
+## Proyecto Finalizad
