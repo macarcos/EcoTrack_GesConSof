@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card shadow">
+    <div class="card-header bg-primary text-white">
+        <h3>📂 Carga Masiva de Consumos</h3>
+    </div>
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="archivo" class="form-label">Sube tu archivo Excel (.xlsx)</label>
+                <input type="file" class="form-control" name="archivo" required>
+                <div class="form-text">Columnas requeridas: <b>cedula, tipo, cantidad</b></div>
+            </div>
+            <button type="submit" class="btn btn-success">📤 Subir y Procesar</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

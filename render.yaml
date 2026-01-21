@@ -16,4 +16,4 @@ databases:
   - name: ecotrack-db
     plan: free
     databaseName: ecotrack
-    user: postgres
+    user: ecotrack  <-- CAMBIO AQUÍ
