@@ -60,10 +60,14 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL', f'sqlite:///{BASE_DIR}/db.sqlite3'),
-        conn_max_age=600
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'ecotrack',       # Nombre que está en tu docker-compose
+        'USER': 'postgres',       # Usuario que está en tu docker-compose
+        'PASSWORD': 'postgres',   # Contraseña que está en tu docker-compose
+        'HOST': 'localhost',      # Nos conectamos localmente al puerto expuesto
+        'PORT': '5433',
+    }
 }
 
 AUTH_PASSWORD_VALIDATORS = [
