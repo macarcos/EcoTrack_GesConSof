@@ -58,17 +58,27 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-# Database
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'ecotrack',       # Nombre que está en tu docker-compose
-        'USER': 'postgres',       # Usuario que está en tu docker-compose
-        'PASSWORD': 'postgres',   # Contraseña que está en tu docker-compose
-        'HOST': 'localhost',      # Nos conectamos localmente al puerto expuesto
-        'PORT': '5433',
-    }
+    'default': dj_database_url.config(
+        # Si no hay nube (Render), usa SQLite por defecto para desarrollo local rápido
+        default='sqlite:///db.sqlite3',
+        conn_max_age=600
+    )
 }
+
+# Parche para Docker Local (Opcional, si usas docker-compose localmente)
+# Si la variable de entorno DB_HOST existe (Docker), sobreescribimos.
+if os.environ.get('POSTGRES_DB'):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('POSTGRES_DB'),
+            'USER': os.environ.get('POSTGRES_USER'),
+            'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+            'HOST': 'db', # Nombre del servicio en docker-compose
+            'PORT': '5432',
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},

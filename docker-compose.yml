@@ -21,3 +21,5 @@ services:
       - POSTGRES_PASSWORD=postgres
 volumes:
   postgres_data:
+
+  
