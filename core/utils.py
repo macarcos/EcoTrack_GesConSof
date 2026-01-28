@@ -3,7 +3,7 @@ from .models import RegistroConsumo
 
 def generar_recomendacion_gemini(registro_id):
     # Configuración de la IA
-    genai.configure(api_key="TU_API_KEY_AQUI")
+    genai.configure(api_key="AIzaSyDwYZPb-XTe3F_sGdC_XJIgBmrWt3Izbqw")
     model = genai.GenerativeModel('gemini-pro')
     
     # Obtener los datos desde Postgres
@@ -11,7 +11,7 @@ def generar_recomendacion_gemini(registro_id):
     
     prompt = (f"Actúa como un experto ambiental. El usuario {registro.usuario.nombres} "
               f"registró un consumo de {registro.cantidad} en el recurso {registro.tipo_recurso}. "
-              f"Dame una recomendación técnica y breve para reducir este consumo.")
+              f"Dame una recomendación técnica y breve para reducir este consumo al anterior lo mas precisa posible.")
 
     try:
         response = model.generate_content(prompt)
