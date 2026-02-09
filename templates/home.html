@@ -3,142 +3,212 @@
 {% block content %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<div class="container-fluid p-0">
-    <div class="row mb-3 align-items-center">
-        <div class="col-md-5">
-            <h4 class="fw-bold text-dark mb-0">📊 Dashboard</h4>
-            <small class="text-muted">Monitoreo inteligente de consumos.</small>
-        </div>
-        <div class="col-md-7">
-            <form method="get" action="{% url 'dashboard' %}" class="d-flex gap-2 p-2 bg-white shadow-sm rounded justify-content-end">
-                <input type="text" name="q" class="form-control form-control-sm" placeholder="🔍 Buscar nombre/cédula..." value="{{ request.GET.q }}" style="max-width: 180px;">
-                <input type="date" name="fecha" class="form-control form-control-sm" style="max-width: 130px;" value="{{ request.GET.fecha }}">
-                <button type="submit" class="btn btn-primary btn-sm px-3">Filtrar</button>
-                {% if request.GET.q or request.GET.fecha %}
-                    <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary btn-sm">Limpiar</a>
-                {% endif %}
-            </form>
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 gap-3">
+    <div>
+        <h3 class="fw-bold text-dark mb-0"><i class="bi bi-speedometer2"></i> Dashboard</h3>
+        <p class="text-muted mb-0 small">Monitoreo inteligente de consumos y alertas.</p>
+    </div>
+
+    <form method="get" action="{% url 'dashboard' %}" class="d-flex gap-2 p-1 bg-white shadow-sm rounded-3 border">
+        <input type="text" name="q" class="form-control form-control-sm border-0" placeholder="🔍 Buscar usuario..." value="{{ request.GET.q }}" style="min-width: 150px;">
+        <input type="date" name="fecha" class="form-control form-control-sm border-0" value="{{ request.GET.fecha }}">
+        <button type="submit" class="btn btn-primary btn-sm fw-bold px-3">Filtrar</button>
+        {% if request.GET.q or request.GET.fecha %}
+            <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary btn-sm" title="Limpiar filtros"><i class="bi bi-x-lg"></i></a>
+        {% endif %}
+    </form>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card shadow border-0 h-100">
+            <div class="card-header bg-white fw-bold border-0 py-3">
+                <i class="bi bi-pie-chart-fill text-primary"></i> Distribución de Gastos
+            </div>
+            <div class="card-body d-flex justify-content-center align-items-center position-relative">
+                <div style="height: 250px; width: 100%;">
+                    <canvas id="miGraficoConsumos"></canvas>
+                </div>
+            </div>
+            <div class="card-footer bg-white border-0 text-center small text-muted pb-3">
+                Visualización por tipo de recurso acumulado.
+            </div>
         </div>
     </div>
 
-    <div class="row g-3">
-        <div class="col-lg-4">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-header bg-white fw-bold border-0 py-2 small">
-                    📈 Distribución de Gastos
-                </div>
-                <div class="card-body d-flex justify-content-center align-items-center p-2">
-                    <div style="height: 220px; width: 220px;">
-                        <canvas id="miGraficoConsumos"></canvas>
-                    </div>
-                </div>
+    <div class="col-lg-8">
+        <div class="card shadow border-0 h-100">
+            <div class="card-header bg-success text-white d-flex justify-content-between align-items-center py-2 px-3">
+                <h6 class="mb-0 fw-bold"><i class="bi bi-clipboard-data"></i> Historial y Análisis IA</h6>
+                <span class="badge bg-white text-success rounded-pill small">Últimos registros</span>
             </div>
-        </div>
-
-        <div class="col-lg-8">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center py-2">
-                    <h6 class="mb-0">📋 Historial y Análisis IA</h6>
-                </div>
-                <div class="table-responsive">
-                    <table class="table table-hover table-sm align-middle mb-0 small">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Usuario</th>
-                                <th>Recurso</th>
-                                <th>Estado</th> <th>Recomendación IA 🤖</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for item in consumos %}
-                            <tr>
-                                <td class="text-nowrap">{{ item.obj.fecha_consumo|date:"d/m/y" }}</td>
-                                
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="bg-light rounded-circle p-1 me-2 fw-bold text-success border text-center" style="width: 30px; height: 30px; line-height: 20px;">
-                                            {{ item.obj.usuario.nombres|slice:":1"|upper }}
-                                        </div>
-                                        <div>
-                                            <div class="fw-bold text-dark">{{ item.obj.usuario.nombres }}</div>
-                                            <small class="text-muted" style="font-size: 0.8em;">{{ item.obj.usuario.cedula }}</small>
-                                        </div>
+            
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 small">
+                    <thead class="table-light text-secondary">
+                        <tr>
+                            <th class="ps-3">Fecha</th>
+                            <th>Usuario</th>
+                            <th>Recurso</th>
+                            <th>Estado</th> 
+                            <th>Recomendación IA <i class="bi bi-robot"></i></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in consumos %}
+                        <tr>
+                            <td class="ps-3 text-nowrap text-muted fw-bold">{{ item.obj.fecha_consumo|date:"d M, Y" }}</td>
+                            
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center me-2 shadow-sm" 
+                                         style="width: 32px; height: 32px; font-size: 0.85rem;">
+                                        {{ item.obj.usuario.nombres|slice:":1"|upper }}
                                     </div>
-                                </td>
-                                
-                                <td>
-                                    {% if item.obj.tipo_recurso == 'luz' %} <span class="badge bg-warning text-dark border">💡 Luz</span>
-                                    {% elif item.obj.tipo_recurso == 'agua' %} <span class="badge bg-info text-dark border">💧 Agua</span>
-                                    {% elif item.obj.tipo_recurso == 'gasolina' %} <span class="badge bg-danger border">⛽ Gas</span>
-                                    {% else %} <span class="badge bg-secondary">{{ item.obj.tipo_recurso|title }}</span>{% endif %}
-                                </td>
-                                
-                                <td>
                                     <div class="d-flex flex-column">
-                                        <span class="fw-bold fs-6">{{ item.obj.cantidad|floatformat:0 }}</span>
-                                        
-                                        {% if item.es_mayor %}
-                                            <span class="badge bg-danger-subtle text-danger border border-danger p-1 mt-1" style="font-size: 0.7em;">
-                                                🔺 Subió
-                                            </span>
-                                        {% else %}
-                                            <span class="badge bg-success-subtle text-success border border-success p-1 mt-1" style="font-size: 0.7em;">
-                                                ✅ Estable
-                                            </span>
-                                        {% endif %}
+                                        <span class="fw-bold text-dark">{{ item.obj.usuario.nombres }}</span>
+                                        <span class="text-muted" style="font-size: 0.75rem;">{{ item.obj.usuario.cedula }}</span>
                                     </div>
-                                </td>
-
-                                <td style="min-width: 250px; max-width: 350px;">
-                                    {% if not item.obj.recomendacion_ia %}
-                                        <span class="text-muted small">- Sin análisis -</span>
+                                </div>
+                            </td>
+                            
+                            <td>
+                                {% if item.obj.tipo_recurso == 'luz' or item.obj.tipo_recurso == 'Electricidad' %} 
+                                    <span class="badge bg-warning text-dark border border-warning-subtle"><i class="bi bi-lightning-fill"></i> Luz</span>
+                                {% elif item.obj.tipo_recurso == 'agua' or item.obj.tipo_recurso == 'Agua' %} 
+                                    <span class="badge bg-info text-dark border border-info-subtle"><i class="bi bi-droplet-fill"></i> Agua</span>
+                                {% elif item.obj.tipo_recurso == 'gasolina' %} 
+                                    <span class="badge bg-danger border border-danger-subtle"><i class="bi bi-fuel-pump-fill"></i> Gas</span>
+                                {% else %} 
+                                    <span class="badge bg-secondary">{{ item.obj.tipo_recurso|title }}</span>
+                                {% endif %}
+                            </td>
+                            
+                            <td>
+                                <div class="d-flex flex-column align-items-start">
+                                    <span class="fw-bold fs-6">{{ item.obj.cantidad|floatformat:0 }}</span>
                                     
-                                    {% elif "Error" in item.obj.recomendacion_ia or "404" in item.obj.recomendacion_ia %}
-                                        <div class="p-2 rounded bg-light border text-muted small">
-                                            <i class="bi bi-wifi-off"></i> IA no disponible por el momento.
-                                        </div>
-
+                                    {% if item.es_mayor %}
+                                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill mt-1 px-2" style="font-size: 0.65em;">
+                                            <i class="bi bi-arrow-up-short"></i> Subió
+                                        </span>
                                     {% else %}
-                                        <div class="p-2 rounded bg-success-subtle border border-success text-success-emphasis small position-relative">
-                                            <i class="bi bi-stars text-warning"></i> 
-                                            <span class="fst-italic">"{{ item.obj.recomendacion_ia }}"</span>
-                                        </div>
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill mt-1 px-2" style="font-size: 0.65em;">
+                                            <i class="bi bi-arrow-down-short"></i> Estable
+                                        </span>
                                     {% endif %}
-                                </td>
-                            </tr>
-                            {% empty %}
-                            <tr><td colspan="5" class="text-center py-4 text-muted">No se encontraron registros.</td></tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+                                </div>
+                            </td>
+
+                            <td style="min-width: 280px; max-width: 400px;">
+                                {% if not item.obj.recomendacion_ia or item.obj.recomendacion_ia == "None" %}
+                                    <span class="text-muted small fst-italic">- Pendiente de análisis -</span>
+                                
+                                {% elif "Error" in item.obj.recomendacion_ia or "No se pudo" in item.obj.recomendacion_ia %}
+                                    <div class="alert alert-warning p-2 mb-0 border-0 small d-flex align-items-center gap-2">
+                                        <i class="bi bi-exclamation-triangle-fill"></i>
+                                        <span>No se pudo generar consejo.</span>
+                                    </div>
+
+                                {% else %}
+                                    <div class="p-2 rounded-3 bg-success-subtle border border-success-subtle text-dark small shadow-sm position-relative">
+                                        <i class="bi bi-stars text-warning position-absolute top-0 end-0 m-1"></i>
+                                        <span class="fst-italic">"{{ item.obj.recomendacion_ia }}"</span>
+                                    </div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-5">
+                                <div class="text-muted">
+                                    <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                                    No se encontraron registros de consumo.
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
+            {% if consumos|length > 10 %}
+            <div class="card-footer bg-white border-0 py-2">
+                <small class="text-muted">Mostrando los registros más recientes.</small>
+            </div>
+            {% endif %}
         </div>
     </div>
 </div>
 
 <script>
-    const ctx = document.getElementById('miGraficoConsumos').getContext('2d');
-    const labels = JSON.parse('{{ labels_grafico|safe }}'); 
-    const data = JSON.parse('{{ data_grafico|safe }}');
+    document.addEventListener("DOMContentLoaded", function() {
+        const ctx = document.getElementById('miGraficoConsumos');
+        if (ctx) {
+            // Datos seguros desde Django
+            const rawLabels = '{{ labels_grafico|safe }}'; 
+            const rawData = '{{ data_grafico|safe }}';
 
-    new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: labels,
-            datasets: [{
-                data: data,
-                backgroundColor: ['#ffcd56', '#36a2eb', '#ff6384', '#4bc0c0', '#9966ff'],
-                borderWidth: 1
-            }]
-        },
-        options: { 
-            responsive: true, 
-            maintainAspectRatio: false, 
-            plugins: { 
-                legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } 
-            } 
+            // Validación simple para evitar errores de JSON vacío
+            let labels = [];
+            let data = [];
+            
+            try {
+                labels = JSON.parse(rawLabels);
+                data = JSON.parse(rawData);
+            } catch (e) {
+                console.error("Error parseando datos del gráfico", e);
+            }
+
+            if (labels.length > 0) {
+                new Chart(ctx.getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: data,
+                            backgroundColor: [
+                                '#36a2eb', // Azul
+                                '#ffcd56', // Amarillo
+                                '#4bc0c0', // Verde agua
+                                '#ff6384', // Rojo
+                                '#9966ff', // Morado
+                                '#ff9f40'  // Naranja
+                            ],
+                            borderWidth: 2,
+                            borderColor: '#ffffff',
+                            hoverOffset: 4
+                        }]
+                    },
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: false, 
+                        plugins: { 
+                            legend: { 
+                                position: 'right', 
+                                labels: { 
+                                    usePointStyle: true,
+                                    font: { size: 11, family: "'Poppins', sans-serif" } 
+                                } 
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.label || '';
+                                        let value = context.parsed || 0;
+                                        return ` ${label}: ${value} unidades`;
+                                    }
+                                }
+                            }
+                        },
+                        layout: {
+                            padding: 10
+                        }
+                    } 
+                });
+            } else {
+                // Mostrar mensaje si no hay datos
+                ctx.parentElement.innerHTML = '<div class="d-flex h-100 justify-content-center align-items-center text-muted small">Sin datos para graficar</div>';
+            }
         }
     });
 </script>

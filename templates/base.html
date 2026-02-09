@@ -9,16 +9,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
     <style>
-        /* 1. Reducimos el tamaño de fuente base de toda la app */
-        body { font-family: 'Poppins', sans-serif; font-size: 0.9rem; }
+        /* 1. Configuración Flexbox para el Footer Pegajoso (Sticky Footer) */
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            font-size: 0.9rem;
+            /* Esto hace que el body ocupe toda la altura y empuje el footer */
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
         
         .navbar-custom {
             background: linear-gradient(90deg, #134e5e 0%, #71b280 100%);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Sombra más sutil */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .nav-link { font-weight: 500; transition: 0.3s; font-size: 0.9rem; } /* Letra más chica en menú */
+        .nav-link { font-weight: 500; transition: 0.3s; font-size: 0.9rem; }
         .nav-link:hover { color: #ffeb3b !important; transform: scale(1.05); }
-        .navbar-brand { font-size: 1.1rem; } /* Título más chico */
+        .navbar-brand { font-size: 1.1rem; }
     </style>
 </head>
 <body class="bg-light">
@@ -33,7 +40,8 @@
             </button>
             
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto small"> <li class="nav-item"><a class="nav-link text-white" href="{% url 'inicio' %}"><i class="bi bi-house-door-fill"></i> Inicio</a></li>
+                <ul class="navbar-nav ms-auto small"> 
+                    <li class="nav-item"><a class="nav-link text-white" href="{% url 'inicio' %}"><i class="bi bi-house-door-fill"></i> Inicio</a></li>
                     <li class="nav-item"><a class="nav-link text-white" href="{% url 'dashboard' %}"><i class="bi bi-bar-chart-fill"></i> Estadísticas</a></li>
                     <li class="nav-item"><a class="nav-link text-white" href="{% url 'registrar_consumo' %}"><i class="bi bi-pencil-square"></i> Registrar</a></li>
                     <li class="nav-item"><a class="nav-link text-white" href="{% url 'cargar_excel' %}"><i class="bi bi-file-earmark-spreadsheet-fill"></i> Carga Masiva</a></li>
@@ -51,10 +59,11 @@
                 </div>
             {% endfor %}
         {% endif %}
+        
         {% block content %}{% endblock %}
     </div>
 
-    <footer class="bg-dark text-white text-center py-3 mt-4 small">
+    <footer class="bg-dark text-white text-center py-3 mt-auto small">
         <div class="container">
             <small>&copy; 2026 EcoTrack Solutions.</small>
         </div>
