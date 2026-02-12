@@ -9,8 +9,14 @@ from .models import PerfilUsuario, RegistroConsumo
 from .forms import ConsumoForm
 
 # --- CONFIGURACIÓN GEMINI ---
-GOOGLE_API_KEY = "AIzaSyDlE78DivrZOaG_txVUUTAbBIt6k7a8QH0" # <--- ¡VERIFICA QUE ESTÉ TU CLAVE!
+import os
+# ... imports ...
+
+# --- CONFIGURACIÓN GEMINI ---
+GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY") # <--- Busca la variable del sistema
 genai.configure(api_key=GOOGLE_API_KEY)
+
+# ... resto del código ...
 
 # Conexión Inteligente
 model = None

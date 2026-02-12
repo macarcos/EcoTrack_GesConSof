@@ -3,7 +3,7 @@ from .models import RegistroConsumo
 
 def generar_recomendacion_gemini(registro_id):
     # Configuración de la IA
-    genai.configure(api_key="AIzaSyDwYZPb-XTe3F_sGdC_XJIgBmrWt3Izbqw")
+    genai.configure(api_key="")
     model = genai.GenerativeModel('gemini-pro')
     
     # Obtener los datos desde Postgres

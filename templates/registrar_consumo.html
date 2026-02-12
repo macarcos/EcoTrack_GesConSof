@@ -66,14 +66,17 @@
             if (field.type === 'checkbox') {
                 field.classList.add('form-check-input');
             } else {
-                field.classList.add('form-control');
-                field.classList.add('bg-light'); // Fondo gris suave
+                // Solo añadimos clases si NO las tiene ya (para no duplicar)
+                if (!field.classList.contains('form-control')) {
+                    field.classList.add('form-control');
+                }
+                if (!field.classList.contains('bg-light')) {
+                    field.classList.add('bg-light');
+                }
             }
             
-            // Si el campo es de fecha, intentamos ponerle el estilo
-            if (field.name && field.name.includes('fecha')) {
-                field.type = 'date';
-            }
+            // ❌ ELIMINÉ EL BLOQUE QUE FORZABA LA FECHA AQUÍ
+            // Porque tu forms.py ya lo hace correctamente.
         });
     });
 </script>
